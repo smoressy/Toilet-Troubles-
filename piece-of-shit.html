@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toilet Troubles</title>
+    <style>
+        /* ==========================================================================
+           1. Base & Layout
+           ========================================================================== */
+        :root {
+            --porcelain-color: #f8f9fa;
+            --water-color: rgba(173, 216, 230, 0.4);
+            --shadow-color-light: rgba(0, 0, 0, 0.08);
+            --shadow-color-medium: rgba(0, 0, 0, 0.15);
+            --shadow-color-dark: rgba(0, 0, 0, 0.25);
+            --wall-color: #e9e9e9;
+            --floor-color: #dcdcdc;
+            --grout-color: #c0c0c0;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--wall-color);
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1200px; /* Essential for 3D transforms */
+        }
+
+        .floor {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background-image:
+                linear-gradient(var(--grout-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grout-color) 1px, transparent 1px);
+            background-size: 80px 80px;
+            background-color: var(--floor-color);
+            transform: rotateX(75deg) translateY(200px);
+            z-index: -1;
+        }
+
+        /* ==========================================================================
+           2. Toilet Structure & Ultra-Realism (CSS Only)
+           ========================================================================== */
+        .toilet-container {
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(-15deg) rotateY(0deg) scale(0.9);
+        }
+
+        .toilet {
+            position: relative;
+            width: 380px;
+            height: 400px;
+            z-index: 10;
+        }
+
+        /* The main base of the toilet */
+        .toilet-base {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            height: 300px;
+            background: linear-gradient(to right, #eef2f3, #ffffff, #eef2f3);
+            border-radius: 35% 35% 10px 10px / 50px 50px 10px 10px;
+            box-shadow: 
+                0 40px 50px var(--shadow-color-medium),
+                inset 0 5px 15px rgba(255, 255, 255, 0.8),
+                inset 0 -10px 15px var(--shadow-color-light);
+        }
+        
+        /* The tank at the back */
+        .toilet-tank {
+            position: absolute;
+            bottom: 250px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 300px;
+            background: linear-gradient(170deg, var(--porcelain-color) 80%, #d1d8e0 100%);
+            border-radius: 10px 10px 20px 20px;
+            box-shadow: 
+                inset 0px 10px 20px rgba(255, 255, 255, 1),
+                inset 0px -5px 15px var(--shadow-color-light),
+                -10px 10px 30px var(--shadow-color-medium);
+        }
+
+        .tank-lid {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 420px;
+            height: 50px;
+            background: linear-gradient(to bottom, #ffffff, var(--porcelain-color));
+            border-radius: 10px;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .tank-lid::before { /* Flush Handle */
+            content: '';
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            width: 40px;
+            height: 15px;
+            background: linear-gradient(to right, #e0e0e0, #f8f8f8);
+            border: 1px solid #b0b0b0;
+            border-radius: 3px;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+
+        /* The main bowl - a multi-layered element for realism */
+        .toilet-bowl {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            width: 380px;
+            height: 250px;
+            transform: translateX(-50%) perspective(500px) rotateX(65deg);
+            background: var(--porcelain-color);
+            border-radius: 50%;
+            box-shadow: 
+                inset 0 0 80px var(--shadow-color-medium),
+                0 10px 20px var(--shadow-color-dark);
+            transform-style: preserve-3d;
+        }
+
+        .bowl-rim {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            border: 30px solid var(--porcelain-color);
+            box-shadow: 
+                inset 0 10px 20px rgba(255,255,255,0.8),
+                inset 0 -10px 20px var(--shadow-color-light);
+            background: linear-gradient(135deg, #e0e0e0, #ffffff);
+        }
+
+        .bowl-water {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55%;
+            height: 55%;
+            background: var(--water-color);
+            border-radius: 50%;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+            transition: transform 1.5s cubic-bezier(0.5, 0, 0.5, 1);
+            transform-origin: bottom;
+        }
+
+        /* Toilet Seat */
+        .toilet-seat {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            border: 45px solid #f0f0f0;
+            box-shadow: 
+                0 5px 10px rgba(0,0,0,0.1),
+                inset 0 3px 5px rgba(0,0,0,0.1);
+            transform: translateZ(25px); /* Lifts the seat slightly */
+            background: transparent;
+            pointer-events: none;
+        }
+
+        /* ==========================================================================
+           3. Game Elements & Animations
+           ========================================================================== */
+        .poop {
+            position: absolute;
+            background: radial-gradient(circle at 30% 30%, #8b4513, #5a2d0c);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            z-index: 100;
+            animation: drop-in 0.5s cubic-bezier(0.5, 0, 0.5, 1.5);
+            transform-origin: center;
+        }
+
+        @keyframes drop-in {
+            from {
+                transform: translateY(-300px) scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Vortex particles for flush animation */
+        .water-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            z-index: 99;
+        }
+
+
+        /* ==========================================================================
+           4. UI Overlay
+           ========================================================================== */
+        .ui-overlay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #flush-button {
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(180deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255,255,255,0.4);
+            text-shadow: 0 -1px 1px rgba(0,0,0,0.3);
+            transition: all 0.2s ease-in-out;
+            transform: translateY(0);
+        }
+
+        #flush-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255,255,255,0.4);
+        }
+
+        #flush-button:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255,255,255,0.4);
+        }
+
+        #flush-button:disabled {
+            background: linear-gradient(180deg, #bdc3c7, #95a5a6);
+            cursor: not-allowed;
+            color: #d1d8e0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(0,0,0,0.1);
+            text-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="floor"></div>
+
+    <div class="toilet-container">
+        <div class="toilet">
+            <div class="toilet-base"></div>
+            <div class="toilet-tank">
+                <div class="tank-lid"></div>
+            </div>
+            <div class="toilet-bowl">
+                <div class="bowl-water" id="water"></div>
+                <div class="bowl-rim"></div>
+                <div class="toilet-seat"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="ui-overlay">
+        <button id="flush-button" disabled>Flush</button>
+    </div>
+
+<script>
+    /**
+     * =========================================================================
+     * Toilet Troubles - Game Logic
+     * 
+     * This script manages the game state, element creation, and the complex
+     * flush animation.
+     * =========================================================================
+     */
+
+    // --- DOM Element References ---
+    const flushButton = document.getElementById('flush-button');
+    const water = document.getElementById('water');
+    const toiletBowl = document.querySelector('.toilet-bowl');
+
+    // --- Game State ---
+    let gameState = 'IDLE'; // 'IDLE', 'POOP_PRESENT', 'FLUSHING'
+    let poopElement = null;
+    let gameLoopTimeout = null;
+
+    // --- Configuration ---
+    const MIN_POOP_INTERVAL = 3000; // ms
+    const MAX_POOP_INTERVAL = 8000; // ms
+    const FLUSH_ANIMATION_DURATION = 2500; // ms
+    const WATER_REFILL_DURATION = 1500; // ms
+    const VORTEX_PARTICLE_COUNT = 80;
+
+    /**
+     * Updates the flush button's state (enabled/disabled) based on game state.
+     */
+    function updateButtonState() {
+        if (gameState === 'POOP_PRESENT') {
+            flushButton.disabled = false;
+        } else {
+            flushButton.disabled = true;
+        }
+    }
+
+    /**
+     * Generates a random number within a given range.
+     * @param {number} min - The minimum value.
+     * @param {number} max - The maximum value.
+     * @returns {number} A random number.
+     */
+    function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    /**
+     * Creates and displays a new piece of poop with random properties.
+     */
+    function createPoop() {
+        if (gameState !== 'IDLE') return;
+
+        gameState = 'POOP_PRESENT';
+
+        poopElement = document.createElement('div');
+        poopElement.className = 'poop';
+
+        // Randomize size
+        const size = randomInRange(40, 80);
+        poopElement.style.width = `${size}px`;
+        poopElement.style.height = `${size * randomInRange(0.6, 1.2)}px`;
+
+        // Randomize position within the water
+        const waterRect = water.getBoundingClientRect();
+        const bowlRect = toiletBowl.getBoundingClientRect();
+        const offsetX = (bowlRect.width - waterRect.width) / 2;
+        const offsetY = (bowlRect.height - waterRect.height) / 2;
+        
+        poopElement.style.top = `${offsetY + waterRect.height/2 - parseFloat(poopElement.style.height)/2 + randomInRange(-10, 10)}px`;
+        poopElement.style.left = `${offsetX + waterRect.width/2 - parseFloat(poopElement.style.width)/2 + randomInRange(-10, 10)}px`;
+
+        // Randomize organic shape using border-radius
+        poopElement.style.borderRadius = `
+            ${randomInRange(30, 70)}% ${randomInRange(30, 70)}% 
+            ${randomInRange(30, 70)}% ${randomInRange(30, 70)}% / 
+            ${randomInRange(30, 70)}% ${randomInRange(30, 70)}% 
+            ${randomInRange(30, 70)}% ${randomInRange(30, 70)}%`;
+        
+        toiletBowl.appendChild(poopElement);
+        updateButtonState();
+    }
+
+    /**
+     * Initiates the flush sequence, including the vortex animation.
+     */
+    function startFlush() {
+        if (gameState !== 'POOP_PRESENT') return;
+
+        gameState = 'FLUSHING';
+        updateButtonState();
+
+        // 1. Animate water level going down
+        water.style.transform = 'translate(-50%, -50%) scaleY(0.1)';
+
+        // 2. Create and animate vortex particles
+        const particles = [];
+        const bowlCenterX = toiletBowl.clientWidth / 2;
+        const bowlCenterY = toiletBowl.clientHeight / 2;
+
+        for (let i = 0; i < VORTEX_PARTICLE_COUNT; i++) {
+            const p = document.createElement('div');
+            p.className = 'water-particle';
+            toiletBowl.appendChild(p);
+            
+            particles.push({
+                element: p,
+                angle: randomInRange(0, Math.PI * 2),
+                radius: randomInRange(bowlCenterX * 0.1, bowlCenterX * 0.6),
+                speed: randomInRange(0.05, 0.1),
+                scale: randomInRange(0.5, 1.2)
+            });
+        }
+        
+        let startTime = null;
+
+        function animateVortex(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = (timestamp - startTime) / FLUSH_ANIMATION_DURATION;
+
+            if (progress > 1) {
+                // Cleanup after animation
+                particles.forEach(p => p.element.remove());
+                if (poopElement) poopElement.remove();
+                poopElement = null;
+                refillWater();
+                return;
+            }
+
+            // Animate each particle
+            particles.forEach(p => {
+                p.angle += p.speed;
+                p.radius -= 0.8 * (1 - progress); // Radius decreases over time
+
+                const x = bowlCenterX + p.radius * Math.cos(p.angle) - p.element.clientWidth / 2;
+                const y = bowlCenterY + p.radius * Math.sin(p.angle) - p.element.clientHeight / 2;
+                
+                p.element.style.transform = `translate(${x}px, ${y}px) scale(${p.scale * (1 - progress)})`;
+                p.element.style.opacity = 1 - progress;
+            });
+
+            // Animate the poop getting sucked in
+            if (poopElement) {
+                const poopProgress = Math.min(progress * 1.5, 1); // Poop disappears faster
+                poopElement.style.transform = `
+                    translate(0, 0) 
+                    scale(${1 - poopProgress}) 
+                    rotate(${poopProgress * 720}deg)`;
+                poopElement.style.opacity = 1 - poopProgress;
+            }
+
+            requestAnimationFrame(animateVortex);
+        }
+
+        requestAnimationFrame(animateVortex);
+    }
+
+    /**
+     * Animates the water refilling the bowl and resets the game state.
+     */
+    function refillWater() {
+        water.style.transition = `transform ${WATER_REFILL_DURATION}ms cubic-bezier(0.25, 1, 0.5, 1)`;
+        water.style.transform = 'translate(-50%, -50%) scaleY(1)';
+
+        setTimeout(() => {
+            water.style.transition = 'transform 1.5s cubic-bezier(0.5, 0, 0.5, 1)'; // Reset transition
+            resetGame();
+        }, WATER_REFILL_DURATION);
+    }
+    
+    /**
+     * Resets the game to its initial state and schedules the next poop.
+     */
+    function resetGame() {
+        gameState = 'IDLE';
+        updateButtonState();
+        scheduleNextPoop();
+    }
+
+    /**
+     * Schedules the next poop drop after a random interval.
+     */
+    function scheduleNextPoop() {
+        clearTimeout(gameLoopTimeout);
+        const interval = randomInRange(MIN_POOP_INTERVAL, MAX_POOP_INTERVAL);
+        gameLoopTimeout = setTimeout(createPoop, interval);
+    }
+
+    // --- Event Listeners & Initialization ---
+    flushButton.addEventListener('click', startFlush);
+    
+    // Start the game!
+    console.log("Welcome to Toilet Troubles! Wait for it...");
+    scheduleNextPoop();
+
+</script>
+</body>
+  </html>
